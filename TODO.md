@@ -1,0 +1,11 @@
+- wordstone block (with block entity)
+	- placing prompts you to enter a unique 4 letter combo
+	- right clicking allows you to write any 4 letter combo and teleport to it if it exists
+	- teleporting drops most (maybe all?) your items on the ground
+- drop box block (with block entity)
+	- stores an inventory for each player that opens it
+	- players can take out items but not put them in
+	- when placed next to a wordstone, all dropped items go in the drop box instead
+- last will item
+	- can be assigned to a drop box
+	- after you die and some other condition applies, it sends your items to the dropbox instead of dropping them
