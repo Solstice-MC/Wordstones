@@ -1,13 +1,18 @@
 package org.solstice.wordstones.registry;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Rarity;
 import org.solstice.wordstones.Wordstones;
+import org.solstice.euclidsElements.client.EuclidsModelPredicateProviderRegistry;
 import org.solstice.wordstones.content.item.LastWillItem;
+import org.solstice.euclidsElements.content.item.LocationBindingItem;
 
 import java.util.function.Function;
 
@@ -15,9 +20,21 @@ public class WordstoneItems {
 
 	public static void init() {}
 
+	@Deprecated
+	@Environment(EnvType.CLIENT)
+	public static void clientInit() {
+		EuclidsModelPredicateProviderRegistry.register(
+			LocationBindingItem.class,
+			Wordstones.of("bound_location"),
+			LocationBindingItem::getLocationPredicate
+		);
+	}
+
 	public static final Item LAST_WILL = register("last_will",
 		LastWillItem::new,
 		new Item.Settings()
+			.maxCount(1)
+			.rarity(Rarity.RARE)
 	);
 
 	public static Item register(String name) {

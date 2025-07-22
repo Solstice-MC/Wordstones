@@ -1,0 +1,17 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		" # ",
+		"BIB",
+		"###"
+	],
+	"key": {
+		"#": { "item": "minecraft:stone_bricks" },
+		"B": { "item": "minecraft:bookshelf" },
+		"I": { "item": "minecraft:ender_eye" }
+	},
+	"result": {
+		"id": "wordstones:wordstone",
+		"count": 1
+	}
+}

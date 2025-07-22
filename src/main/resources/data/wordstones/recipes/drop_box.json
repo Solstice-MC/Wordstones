@@ -1,0 +1,16 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"ILI",
+		"I I",
+		"ILI"
+	],
+	"key": {
+		"I": { "item": "minecraft:iron_ingot" },
+		"L": { "item": "minecraft:lapis_lazuli" }
+	},
+	"result": {
+		"id": "wordstones:drop_box",
+		"count": 1
+	}
+}

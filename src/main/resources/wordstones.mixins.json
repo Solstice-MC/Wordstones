@@ -2,7 +2,9 @@
 	"required": true,
 	"package": "org.solstice.wordstones.mixin",
 	"compatibilityLevel": "JAVA_21",
-	"mixins": [],
+	"mixins": [
+		"PlayerInventoryMixin"
+	],
 	"injectors": {
 		"defaultRequire": 1
 	},

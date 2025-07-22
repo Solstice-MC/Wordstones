@@ -8,13 +8,16 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import org.solstice.wordstones.Wordstones;
-import org.solstice.wordstones.content.block.Word;
+import org.solstice.euclidsElements.util.Location;
 
 public class WordstoneComponentTypes {
 
 	public static void init() {}
 
-	public static final ComponentType<Word> WORD = register("word", Word.CODEC);
+	public static final ComponentType<Location> LOCATION = register("location",
+		Location.CODEC,
+		Location.PACKET_CODEC
+	);
 
 	private static <T> ComponentType<T> register(String name, Codec<T> codec) {
 		return register(name, codec, PacketCodecs.registryCodec(codec));

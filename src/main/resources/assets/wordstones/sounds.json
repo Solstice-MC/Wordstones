@@ -1,0 +1,17 @@
+{
+	"block.drop_box.deposit": {
+		"sounds": [
+			{
+				"name": "random/pop",
+				"pitch": 0.75
+			}
+		],
+		"subtitle": "subtitle.block.drop_box.deposit"
+	},
+	"block.drop_box.retrieve": {
+		"sounds": [
+			"random/pop"
+		],
+		"subtitle": "subtitle.block.drop_box.retrieve"
+	}
+}

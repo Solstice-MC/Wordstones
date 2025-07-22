@@ -21,6 +21,11 @@
 	},
 	"mixins": [ "wordstones.mixins.json" ],
 	"accessWidener": "wordstones.accesswidener",
+	"custom": {
+		"loom:injected_interfaces": {
+			"net/minecraft/entity/player/PlayerInventory": [ "org/solstice/wordstones/content/entity/WordstonesPlayerInventory" ]
+		}
+	},
 
 	"depends": {
 		"minecraft": "*",

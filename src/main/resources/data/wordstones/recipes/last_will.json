@@ -1,0 +1,11 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{ "item": "minecraft:echo_shard" },
+		{ "item": "minecraft:paper" }
+	],
+	"result": {
+		"id": "wordstones:last_will",
+		"count": 1
+	}
+}

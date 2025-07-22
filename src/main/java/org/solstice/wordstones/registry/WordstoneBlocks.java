@@ -13,6 +13,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import org.solstice.wordstones.Wordstones;
+import org.solstice.wordstones.content.block.DropBoxBlock;
 import org.solstice.wordstones.content.block.WordstoneBlock;
 
 import java.util.function.Function;
@@ -23,6 +24,15 @@ public class WordstoneBlocks {
 
 	public static final Block WORDSTONE = register("wordstone",
 		WordstoneBlock::new,
+		AbstractBlock.Settings.create()
+			.requiresTool()
+			.strength(2.0F, 6.0F)
+			.mapColor(MapColor.IRON_GRAY)
+			.sounds(BlockSoundGroup.STONE)
+			.pistonBehavior(PistonBehavior.BLOCK)
+	);
+	public static final Block DROP_BOX = register("drop_box",
+		DropBoxBlock::new,
 		AbstractBlock.Settings.create()
 			.requiresTool()
 			.strength(2.0F, 6.0F)

@@ -1,0 +1,5 @@
+{
+	"container.wordstones.drop_box": "Drop Box",
+	"screen.wordstones.word_edit": "Edit Wordstone Word",
+	"item.wordstones.bound_location": "%s (%d, %d, %d)"
+}

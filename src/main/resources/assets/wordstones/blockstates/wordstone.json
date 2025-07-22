@@ -1,0 +1,10 @@
+{
+	"variants": {
+		"half=upper": {
+			"model": "wordstones:block/empty"
+		},
+		"half=lower": {
+			"model": "wordstones:block/wordstone"
+		}
+	}
+}
