@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import org.solstice.wordstones.Wordstones;
-import org.solstice.wordstones.content.block.Word;
+import org.solstice.wordstones.content.Word;
 import org.solstice.euclidsElements.util.Location;
 
 import java.util.Map;

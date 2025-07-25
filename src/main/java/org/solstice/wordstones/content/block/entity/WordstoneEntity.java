@@ -8,10 +8,11 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.solstice.wordstones.content.block.Word;
+import org.solstice.wordstones.content.Word;
 import org.solstice.euclidsElements.util.Location;
 import org.solstice.wordstones.registry.WordstoneAttachmentTypes;
 import org.solstice.wordstones.registry.WordstoneBlockEntityTypes;
@@ -47,6 +48,7 @@ public class WordstoneEntity extends BlockEntity {
 		return this.word != null;
 	}
 
+	@Nullable
     public Word getWord() {
         return this.word;
     }
@@ -66,32 +68,26 @@ public class WordstoneEntity extends BlockEntity {
 
 		World world = player.getWorld().getServer().getWorld(location.worldKey());
 
-//        DefaultedList<ItemStack> inventory = DefaultedList.ofSize(player.getInventory().size(), ItemStack.EMPTY);
-//        for (int i = 0; i < player.getInventory().size(); i++) {
-//            ItemStack stack = player.getInventory().getStack(i);
-//            if (!stack.isEmpty()) {
-//                inventory.set(i, stack.copy());
-//                player.getInventory().setStack(i, ItemStack.EMPTY);
-//            }
-//        }
-
 		Vec3d vec = location.getVec().add(0.5, 1, 0.5);
-        player.requestTeleport(vec.x, vec.y, vec.z);
+		player.requestTeleport(vec.x, vec.y, vec.z + 1);
 
-        world.playSound(null, player.getX(), player.getY(), player.getZ(),
+		world.playSound(null, player.getX(), player.getY(), player.getZ(),
 			SoundEvents.ENTITY_ENDERMAN_TELEPORT,
 			SoundCategory.PLAYERS,
-			1.0F, 1.0F
+			1, 1
 		);
 
-//        for (int i = 0; i < inventory.size(); i++) {
-//            ItemStack stack = inventory.get(i);
-//            if (!stack.isEmpty()) {
-//                player.dropItem(stack, true);
-//            }
-//        }
+		for (Direction direction : Direction.Type.HORIZONTAL) {
+			BlockPos pos = location.pos().offset(direction);
+			BlockEntity entity = world.getBlockEntity(pos);
+			if (entity instanceof DropBoxEntity dropBox && !dropBox.hasPlayerInventory(player)) {
+				dropBox.depositItems(player);
+				return true;
+			}
+		}
 
-        return true;
+		player.dropInventory();
+		return true;
     }
 
     @Override

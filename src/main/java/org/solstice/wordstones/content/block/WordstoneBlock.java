@@ -14,6 +14,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.solstice.wordstones.content.Word;
 import org.solstice.wordstones.content.block.entity.WordstoneEntity;
 
 public class WordstoneBlock extends AbstractWordstoneBlock {
@@ -40,6 +41,7 @@ public class WordstoneBlock extends AbstractWordstoneBlock {
 		if (!world.isClient && placer instanceof ServerPlayerEntity player) {
 			BlockEntity blockEntity = world.getBlockEntity(pos);
 			if (blockEntity instanceof WordstoneEntity wordstoneEntity && !wordstoneEntity.hasWord()) {
+//				player.openEditSignScreen();
 				player.sendMessage(Text.literal("Enter a unique 4-letter combo for this wordstone:"), false);
 			}
 		}

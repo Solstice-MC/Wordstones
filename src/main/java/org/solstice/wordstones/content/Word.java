@@ -1,4 +1,4 @@
-package org.solstice.wordstones.content.block;
+package org.solstice.wordstones.content;
 
 import com.mojang.serialization.Codec;
 import org.apache.commons.lang3.StringUtils;

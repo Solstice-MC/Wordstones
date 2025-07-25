@@ -3,6 +3,7 @@
 	"package": "org.solstice.wordstones.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"PlayerEntityMixin",
 		"PlayerInventoryMixin"
 	],
 	"injectors": {

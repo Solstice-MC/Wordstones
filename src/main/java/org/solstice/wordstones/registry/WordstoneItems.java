@@ -9,6 +9,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
+import org.solstice.euclidsElements.EuclidsPlayerEvents;
 import org.solstice.wordstones.Wordstones;
 import org.solstice.euclidsElements.client.EuclidsModelPredicateProviderRegistry;
 import org.solstice.wordstones.content.item.LastWillItem;
@@ -18,7 +19,9 @@ import java.util.function.Function;
 
 public class WordstoneItems {
 
-	public static void init() {}
+	public static void init() {
+		EuclidsPlayerEvents.BEFORE_DEATH.register(LastWillItem::beforeDeath);
+	}
 
 	@Deprecated
 	@Environment(EnvType.CLIENT)

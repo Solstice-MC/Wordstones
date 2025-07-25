@@ -9,13 +9,14 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import org.solstice.wordstones.content.entity.WordstonesPlayerInventory;
 import org.solstice.wordstones.registry.WordstoneBlockEntityTypes;
-import org.solstice.wordstones.registry.WordstonesSoundEvents;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,57 +59,70 @@ public class DropBoxEntity extends BlockEntity {
 		});
 	}
 
+	public boolean hasPlayerInventory(PlayerEntity player) {
+		return this.playerInventories.containsKey(player.getUuid());
+	}
+
 	public ActionResult depositItems(PlayerEntity player) {
 		UUID uuid = player.getUuid();
 		if (this.playerInventories.containsKey(uuid)) {
 			player.sendMessage(Text.translatable("block.wordstones.drop_box.inventory_exists"), true);
-			return ActionResult.PASS;
+			return ActionResult.FAIL;
 		}
 
-		PlayerInventory inventory = player.getInventory();
-		if (inventory.isEmpty()) return ActionResult.PASS;
+		PlayerInventory newInventory = copyInventory(player);
+		if (newInventory.isEmpty()) return ActionResult.FAIL;
 
-		PlayerInventory newInventory = tryUnequipPlayer(player);
 		this.playerInventories.put(uuid, newInventory);
+		unequipPlayer(player);
 
 		markDirty();
 		return ActionResult.SUCCESS;
 	}
 
-	public PlayerInventory tryUnequipPlayer(PlayerEntity player) {
+	public static PlayerInventory copyInventory(PlayerEntity player) {
 		PlayerInventory inventory = new PlayerInventory(null);
 		for (int slot = 0; slot < inventory.size(); slot++) {
 			ItemStack stack = player.getInventory().getStack(slot);
 			if (EnchantmentHelper.hasAnyEnchantmentsWith(stack, EnchantmentEffectComponentTypes.PREVENT_ARMOR_CHANGE))
 				continue;
-
 			if (!EnchantmentHelper.hasAnyEnchantmentsWith(stack, EnchantmentEffectComponentTypes.PREVENT_EQUIPMENT_DROP))
 				inventory.setStack(slot, stack);
-			player.getInventory().setStack(slot, ItemStack.EMPTY);
 		}
 		return inventory;
+	}
+
+	public static void unequipPlayer(PlayerEntity player) {
+		for (int slot = 0; slot < player.getInventory().size(); slot++) {
+			ItemStack stack = player.getInventory().getStack(slot);
+			if (!EnchantmentHelper.hasAnyEnchantmentsWith(stack, EnchantmentEffectComponentTypes.PREVENT_ARMOR_CHANGE))
+				player.getInventory().setStack(slot, ItemStack.EMPTY);
+		}
 	}
 
 	public ActionResult retrieveItems(PlayerEntity player) {
 		UUID uuid = player.getUuid();
 		if (!this.playerInventories.containsKey(uuid)) {
 			player.sendMessage(Text.translatable("block.wordstones.drop_box.inventory_not_exists"), true);
-			return ActionResult.PASS;
+			return ActionResult.FAIL;
 		}
 
 		PlayerInventory inventory = this.playerInventories.get(uuid);
-		tryEquipPlayer(inventory, player);
+		equipPlayer(inventory, player);
 		this.playerInventories.remove(uuid);
 
 		markDirty();
 		return ActionResult.SUCCESS;
 	}
 
-	public void tryEquipPlayer(PlayerInventory inventory, PlayerEntity player) {
+	public static void equipPlayer(PlayerInventory inventory, PlayerEntity player) {
 		for (int slot = 0; slot < inventory.size(); slot++) {
 			ItemStack stack = inventory.getStack(slot);
 			if (player.getInventory().getStack(slot).isEmpty()) {
+//				player.getInventory().offerOrDrop(stack);
 				player.getInventory().setStack(slot, stack);
+				if (player instanceof ServerPlayerEntity serverPlayer)
+					serverPlayer.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-2, 0, slot, stack));
 			} else {
 				player.getInventory().offerOrDrop(stack);
 			}

@@ -1,9 +1,11 @@
 package org.solstice.wordstones.registry;
 
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -20,7 +22,12 @@ import java.util.function.Function;
 
 public class WordstoneBlocks {
 
-	public static void init() {}
+	public static void init() {
+		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
+			WORDSTONE,
+			DROP_BOX
+		);
+	}
 
 	public static final Block WORDSTONE = register("wordstone",
 		WordstoneBlock::new,

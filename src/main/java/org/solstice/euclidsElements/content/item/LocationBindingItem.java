@@ -33,7 +33,7 @@ public class LocationBindingItem extends Item {
 
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-		var result = super.use(world, player, hand);
+		TypedActionResult<ItemStack> result = super.use(world, player, hand);
 		if (result.getResult().isAccepted() || !player.isSneaking()) return result;
 
 		ItemStack stack = player.getStackInHand(hand);
@@ -46,19 +46,19 @@ public class LocationBindingItem extends Item {
 
 	@Override
 	public ActionResult useOnBlock(ItemUsageContext context) {
-		if (context.getSide() == Direction.DOWN) return ActionResult.FAIL;
+		if (context.getSide() == Direction.DOWN) return ActionResult.PASS;
 
 		ItemPlacementContext placement = new ItemPlacementContext(context);
 		BlockPos pos = placement.getBlockPos();
 		World world = context.getWorld();
-		if (world.getBlockState(pos.down()).isAir()) return ActionResult.FAIL;
+		if (world.getBlockState(pos.down()).isAir()) return ActionResult.PASS;
 
 		ItemStack stack = context.getStack();
 		Location location = Location.of(pos, world);
-		if (getLocation(stack).equals(location)) return ActionResult.FAIL;
+		if (getLocation(stack).equals(location)) return ActionResult.PASS;
 
 		PlayerEntity player = context.getPlayer();
-		if (player == null) {
+		if (player != null) {
 			stack.set(WordstoneComponentTypes.LOCATION, location);
 		} else {
 			stack.decrement(1);
@@ -83,7 +83,6 @@ public class LocationBindingItem extends Item {
 
 		tooltip.add(text);
 	}
-
 
 	public static boolean hasLocation(ItemStack stack) {
 		return stack.contains(WordstoneComponentTypes.LOCATION);

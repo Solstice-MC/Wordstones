@@ -9,7 +9,7 @@ import net.minecraft.client.util.SelectionManager;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
-import org.solstice.wordstones.content.block.Word;
+import org.solstice.wordstones.content.Word;
 import org.solstice.wordstones.content.block.entity.WordstoneEntity;
 
 public class WordEditScreen extends Screen {
@@ -93,7 +93,6 @@ public class WordEditScreen extends Screen {
 	protected void translateForRender(DrawContext context, BlockState state) {
 		context.getMatrices().translate((float)this.width / 2.0F, 90.0F, 50.0F);
 	}
-
 
 	private void renderSignText(DrawContext context) {
 		context.getMatrices().translate(0.0F, 0.0F, 4.0F);

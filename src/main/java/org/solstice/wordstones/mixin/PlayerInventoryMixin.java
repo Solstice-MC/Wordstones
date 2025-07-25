@@ -23,7 +23,7 @@ public class PlayerInventoryMixin implements WordstonesPlayerInventory {
 			target = "Lnet/minecraft/entity/player/PlayerEntity;getRegistryManager()Lnet/minecraft/registry/DynamicRegistryManager;"
 		)
 	)
-	public DynamicRegistryManager test(PlayerEntity player, Operation<DynamicRegistryManager> original) {
+	public DynamicRegistryManager changeRegistryLookup(PlayerEntity player, Operation<DynamicRegistryManager> original) {
 		if (player != null) return original.call(player);
 		return (DynamicRegistryManager)this.getRegistryLookup();
 	}
