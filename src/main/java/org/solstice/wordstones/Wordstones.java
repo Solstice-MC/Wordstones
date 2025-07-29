@@ -2,12 +2,9 @@ package org.solstice.wordstones;
 
 import net.fabricmc.api.ModInitializer;
 
-import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.solstice.wordstones.content.item.LastWillItem;
 import org.solstice.wordstones.registry.*;
 
 public class Wordstones implements ModInitializer {
@@ -30,6 +27,7 @@ public class Wordstones implements ModInitializer {
 
 		WordstoneItemGroups.init();
 		WordstonesSoundEvents.init();
+		WordstonePackets.init();
 	}
 
 }

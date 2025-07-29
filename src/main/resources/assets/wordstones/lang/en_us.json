@@ -1,6 +1,7 @@
 {
 	"container.wordstones.drop_box": "Drop Box",
-	"screen.wordstones.word_edit": "Edit Wordstone Word",
+	"screen.wordstones.teleport_to_wordstone": "Teleport to Wordstone",
+	"screen.wordstones.edit_wordstone": "Edit Wordstone Word",
 	"item.wordstones.bound_location": "%s (%d%n, %d%n, %d%n)",
 
 	"dimension.minecraft.overworld": "Overworld",

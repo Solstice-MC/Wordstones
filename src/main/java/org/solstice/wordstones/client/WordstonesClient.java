@@ -6,6 +6,7 @@ import org.solstice.euclidsElements.client.EuclidsModelPredicateProviderRegistry
 import org.solstice.wordstones.client.registry.WordstoneEntityRenderers;
 import org.solstice.wordstones.registry.WordstoneBlocks;
 import org.solstice.wordstones.registry.WordstoneItems;
+import org.solstice.wordstones.registry.WordstonePackets;
 
 public class WordstonesClient implements ClientModInitializer {
 
@@ -15,6 +16,7 @@ public class WordstonesClient implements ClientModInitializer {
 		WordstoneEntityRenderers.init();
 		WordstoneItems.clientInit();
 		WordstoneBlocks.clientInit();
+		WordstonePackets.clientInit();
 		ClientLifecycleEvents.CLIENT_STOPPING.register(client -> EuclidsModelPredicateProviderRegistry.init());
 	}
 

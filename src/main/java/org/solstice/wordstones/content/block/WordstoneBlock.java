@@ -1,6 +1,7 @@
 package org.solstice.wordstones.content.block;
 
 import com.mojang.serialization.MapCodec;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.DoubleBlockHalf;
@@ -16,6 +17,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.solstice.wordstones.content.Word;
 import org.solstice.wordstones.content.block.entity.WordstoneEntity;
+import org.solstice.wordstones.content.packet.EditWordstonePacket;
 
 public class WordstoneBlock extends AbstractWordstoneBlock {
 
@@ -40,35 +42,38 @@ public class WordstoneBlock extends AbstractWordstoneBlock {
 		BlockPos abovePos = pos.up();
 		world.setBlockState(abovePos, withWaterloggedState(world, abovePos, this.getDefaultState().with(HALF, DoubleBlockHalf.UPPER)));
 
-		if (!world.isClient && placer instanceof ServerPlayerEntity player) {
-			BlockEntity blockEntity = world.getBlockEntity(pos);
-			if (blockEntity instanceof WordstoneEntity wordstoneEntity && !wordstoneEntity.hasWord()) {
-//				player.openEditSignScreen();
-				player.sendMessage(Text.literal("Enter a unique 4-letter combo for this wordstone:"), false);
-			}
-		}
+		this.editWord(world, pos, placer);
 	}
 
 	@Override
 	protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-		if (world.isClient) return ActionResult.PASS	;
+		if (world.isClient) return ActionResult.PASS;
 
 		BlockPos entityPos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos;
 
 		if (!(world.getBlockEntity(entityPos) instanceof WordstoneEntity wordstone)) return ActionResult.PASS;
-		if (!wordstone.hasWord()) return ActionResult.PASS;
+		if (!wordstone.hasWord()) {
+			this.editWord(world, pos, player);
+			return ActionResult.PASS;
+		}
 
-		if (player.isSneaking()) {
-			Word word = wordstone.getWord();
-			if (WordstoneEntity.wordExists(world, word)) {
-				player.sendMessage(Text.literal("Teleporting to wordstone: " + word), false);
-				WordstoneEntity.teleportPlayerToWord(player, word);
-			} else {
-				player.sendMessage(Text.literal("No wordstone with that combo exists."), false);
-			}
+		Word word = wordstone.getWord();
+		if (WordstoneEntity.wordExists(world, word)) {
+			player.sendMessage(Text.literal("Teleporting to wordstone: " + word), false);
+			WordstoneEntity.teleportPlayerToWord(player, word);
+		} else {
+			player.sendMessage(Text.literal("No wordstone with that combo exists."), false);
 		}
 
 		return ActionResult.SUCCESS;
+	}
+
+	public void editWord(World world, BlockPos pos, LivingEntity entity) {
+		if (world.isClient) return;
+		if (!(entity instanceof ServerPlayerEntity player)) return;
+
+		if (world.getBlockEntity(pos) instanceof WordstoneEntity wordstone && !wordstone.hasWord())
+			ServerPlayNetworking.send(player, new EditWordstonePacket(pos));
 	}
 
 }
