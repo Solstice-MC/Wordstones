@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.solstice.wordstones.content.Word;
 import org.solstice.wordstones.content.block.entity.WordstoneEntity;
-import org.solstice.wordstones.content.packet.EditWordstonePacket;
+import org.solstice.wordstones.content.packet.EditWordstoneS2CPacket;
 
 public class WordstoneBlock extends AbstractWordstoneBlock {
 
@@ -42,7 +42,7 @@ public class WordstoneBlock extends AbstractWordstoneBlock {
 		BlockPos abovePos = pos.up();
 		world.setBlockState(abovePos, withWaterloggedState(world, abovePos, this.getDefaultState().with(HALF, DoubleBlockHalf.UPPER)));
 
-		this.editWord(world, pos, placer);
+		this.editWordstone(world, pos, placer);
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class WordstoneBlock extends AbstractWordstoneBlock {
 
 		if (!(world.getBlockEntity(entityPos) instanceof WordstoneEntity wordstone)) return ActionResult.PASS;
 		if (!wordstone.hasWord()) {
-			this.editWord(world, pos, player);
+			this.editWordstone(world, pos, player);
 			return ActionResult.PASS;
 		}
 
@@ -68,12 +68,20 @@ public class WordstoneBlock extends AbstractWordstoneBlock {
 		return ActionResult.SUCCESS;
 	}
 
-	public void editWord(World world, BlockPos pos, LivingEntity entity) {
+	public void editWordstone(World world, BlockPos pos, LivingEntity entity) {
 		if (world.isClient) return;
 		if (!(entity instanceof ServerPlayerEntity player)) return;
 
 		if (world.getBlockEntity(pos) instanceof WordstoneEntity wordstone && !wordstone.hasWord())
-			ServerPlayNetworking.send(player, new EditWordstonePacket(pos));
+			ServerPlayNetworking.send(player, new EditWordstoneS2CPacket(pos));
+	}
+
+	public void teleportToWordstone(World world, BlockPos pos, LivingEntity entity) {
+		if (world.isClient) return;
+		if (!(entity instanceof ServerPlayerEntity player)) return;
+
+		if (world.getBlockEntity(pos) instanceof WordstoneEntity wordstone && !wordstone.hasWord())
+			ServerPlayNetworking.send(player, new EditWordstoneS2CPacket(pos));
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.solstice.wordstones.content.packet;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -10,14 +12,14 @@ import org.solstice.wordstones.Wordstones;
 import org.solstice.wordstones.client.content.screen.WordstoneEditScreen;
 import org.solstice.wordstones.content.block.entity.WordstoneEntity;
 
-public record EditWordstonePacket(BlockPos pos) implements CustomPayload {
+public record EditWordstoneS2CPacket(BlockPos pos) implements CustomPayload {
 
-	public static final CustomPayload.Id<EditWordstonePacket> ID = new CustomPayload.Id<>(Wordstones.of("edit_wordstone"));
+	public static final CustomPayload.Id<EditWordstoneS2CPacket> ID = new CustomPayload.Id<>(Wordstones.of("edit_wordstone_s2c"));
 
-	public static final PacketCodec<RegistryByteBuf, EditWordstonePacket> CODEC = PacketCodec.tuple(
+	public static final PacketCodec<RegistryByteBuf, EditWordstoneS2CPacket> CODEC = PacketCodec.tuple(
 		BlockPos.PACKET_CODEC,
-		EditWordstonePacket::pos,
-		EditWordstonePacket::new
+		EditWordstoneS2CPacket::pos,
+		EditWordstoneS2CPacket::new
 	);
 
 	@Override
@@ -25,10 +27,11 @@ public record EditWordstonePacket(BlockPos pos) implements CustomPayload {
 		return ID;
 	}
 
-	public static void handle(EditWordstonePacket packet, ClientPlayNetworking.Context context) {
+	@Environment(EnvType.CLIENT)
+	public static void handle(EditWordstoneS2CPacket packet, ClientPlayNetworking.Context context) {
 		World world = context.player().getWorld();
 		if (world.getBlockEntity(packet.pos) instanceof WordstoneEntity wordstone)
-			context.client().setScreen(new WordstoneEditScreen(context.player(), wordstone));
+			context.client().setScreen(new WordstoneEditScreen(wordstone));
 	}
 
 }

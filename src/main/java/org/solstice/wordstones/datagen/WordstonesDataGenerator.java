@@ -11,6 +11,7 @@ public class WordstonesDataGenerator implements DataGeneratorEntrypoint {
 	@Override
 	public void onInitializeDataGenerator(FabricDataGenerator generator) {
 		FabricDataGenerator.Pack pack = generator.createPack();
+		pack.addProvider(WordstoneRecipeGenerator::new);
 		pack.addProvider(AutoLanguageGenerator::new);
 		pack.addProvider(AutoModelGenerator::new);
 		pack.addProvider(AutoLootTableGenerator::new);

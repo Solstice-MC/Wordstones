@@ -10,16 +10,16 @@ import org.solstice.wordstones.Wordstones;
 import org.solstice.wordstones.content.Word;
 import org.solstice.wordstones.content.block.entity.WordstoneEntity;
 
-public record UpdateWordstonePacket(BlockPos pos, Word word) implements CustomPayload {
+public record EditWordstoneC2SPacket(BlockPos pos, Word word) implements CustomPayload {
 
-	public static final CustomPayload.Id<UpdateWordstonePacket> ID = new CustomPayload.Id<>(Wordstones.of("update_wordstone"));
+	public static final CustomPayload.Id<EditWordstoneC2SPacket> ID = new CustomPayload.Id<>(Wordstones.of("update_wordstone_c2s"));
 
-	public static final PacketCodec<RegistryByteBuf, UpdateWordstonePacket> CODEC = PacketCodec.tuple(
+	public static final PacketCodec<RegistryByteBuf, EditWordstoneC2SPacket> CODEC = PacketCodec.tuple(
 		BlockPos.PACKET_CODEC,
-		UpdateWordstonePacket::pos,
+		EditWordstoneC2SPacket::pos,
 		Word.PACKET_CODEC,
-		UpdateWordstonePacket::word,
-		UpdateWordstonePacket::new
+		EditWordstoneC2SPacket::word,
+		EditWordstoneC2SPacket::new
 	);
 
 	@Override
@@ -27,7 +27,8 @@ public record UpdateWordstonePacket(BlockPos pos, Word word) implements CustomPa
 		return ID;
 	}
 
-	public static void handle(UpdateWordstonePacket packet, ServerPlayNetworking.Context context) {
+
+	public static void handle(EditWordstoneC2SPacket packet, ServerPlayNetworking.Context context) {
 		World world = context.player().getWorld();
 		if (world.getBlockEntity(packet.pos) instanceof WordstoneEntity wordstone)
 			wordstone.setWord(packet.word);

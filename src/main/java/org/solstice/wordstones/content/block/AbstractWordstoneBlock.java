@@ -8,6 +8,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
@@ -29,16 +30,20 @@ public abstract class AbstractWordstoneBlock extends BlockWithEntity {
 		CAP_MODEL = Block.createCuboidShape(2, 30, 2, 14, 32, 14),
 		MODEL = VoxelShapes.union(BOTTOM_MODEL, BASE_MODEL, TOP_MODEL, CAP_MODEL);
 
+	public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
 	public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
 
 	public AbstractWordstoneBlock(Settings settings) {
 		super(settings);
-		this.setDefaultState(this.stateManager.getDefaultState().with(HALF, DoubleBlockHalf.LOWER));
+		this.setDefaultState(this.stateManager.getDefaultState()
+			.with(FACING, Direction.NORTH)
+			.with(HALF, DoubleBlockHalf.LOWER)
+		);
 	}
 
 	@Override
 	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-		builder.add(HALF);
+		builder.add(FACING, HALF);
 	}
 
 	@Override

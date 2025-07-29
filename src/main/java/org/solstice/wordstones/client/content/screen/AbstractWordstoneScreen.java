@@ -11,7 +11,6 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.BookModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -23,22 +22,16 @@ import org.solstice.wordstones.content.block.entity.WordstoneEntity;
 
 public abstract class AbstractWordstoneScreen extends Screen {
 
-	private static final Identifier BOOK_TEXTURE = Identifier.ofVanilla("textures/entity/enchanting_table_book.png");
-	@Nullable private BookModel bookModel;
+	public static final Identifier BOOK_TEXTURE = Identifier.ofVanilla("textures/entity/enchanting_table_book.png");
 
-	protected final PlayerEntity player;
 	protected final WordstoneEntity wordstone;
 	protected String word;
 
-	protected int cursorPos = 0;
-	protected boolean cursorVisible = true;
-	protected int tickCount = 0;
+	@Nullable protected ButtonWidget doneButton;
+	@Nullable protected BookModel bookModel;
 
-	protected ButtonWidget doneButton;
-
-	public AbstractWordstoneScreen(Text title, PlayerEntity player, WordstoneEntity wordstone) {
+	public AbstractWordstoneScreen(Text title, WordstoneEntity wordstone) {
 		super(title);
-		this.player = player;
 		this.wordstone = wordstone;
 		this.word = wordstone.getWord() != null ? wordstone.getWord().value() : "";
 	}
@@ -50,29 +43,20 @@ public abstract class AbstractWordstoneScreen extends Screen {
 		this.doneButton = ButtonWidget.builder(ScreenTexts.DONE, this::onDone)
 			.dimensions(this.width / 2 - 100, this.height / 4 + 144, 200, 20)
 			.build();
-
 		this.addDrawableChild(this.doneButton);
 		this.updateButtons();
 
 		MinecraftClient client = this.client;
 		if (client != null) this.bookModel = new BookModel(client.getEntityModelLoader().getModelPart(EntityModelLayers.BOOK));
-		else this.bookModel = null;
-	}
-
-	public boolean isPlayerTooFar() {
-		return !this.player.canInteractWithBlockAt(this.wordstone.getPos(), 4);
 	}
 
 	protected boolean canUse() {
-		return this.client != null && this.client.player != null && !this.wordstone.isRemoved() && !this.isPlayerTooFar();
+		return this.client != null && this.client.player != null && !this.wordstone.isRemoved() && !this.wordstone.isPlayerTooFar(this.client.player);
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
-		this.tickCount++;
-
-		if (this.tickCount % 10 == 0) this.cursorVisible = !this.cursorVisible;
 
 		if (!this.canUse()) this.close();
 	}
@@ -96,7 +80,7 @@ public abstract class AbstractWordstoneScreen extends Screen {
 		DiffuseLighting.enableGuiDepthLighting();
 	}
 
-	private void drawBook(MatrixStack matrices, VertexConsumerProvider vertexConsumers, DrawContext context, int x, int y) {
+	public void drawBook(MatrixStack matrices, VertexConsumerProvider vertexConsumers, DrawContext context, int x, int y) {
 		if (this.bookModel == null) return;
 
 		matrices.push();
@@ -116,7 +100,7 @@ public abstract class AbstractWordstoneScreen extends Screen {
 		matrices.pop();
 	}
 
-	protected void drawText(MatrixStack matrices, DrawContext context, int centerX, int centerY) {
+	public void drawText(MatrixStack matrices, DrawContext context, int centerX, int centerY) {
 		matrices.push();
 		matrices.translate(-centerX, -centerY, 0);
 		matrices.scale(2, 2, 1);
@@ -128,14 +112,11 @@ public abstract class AbstractWordstoneScreen extends Screen {
 		int textX = centerX - 10;
 		int textY = centerY - 10;
 
-		for (int i = 0; i < 4; i++) {
-			String letter = String.valueOf(i < word.length() ? word.charAt(i) : '_');
-
-			int charX = textX + i * 7 - (this.textRenderer.getWidth(letter) / 2);
-			context.drawText(this.textRenderer, letter, charX, textY, 0x000000, false);
-
-			if (i == this.cursorPos && this.cursorVisible && this.isFocused())
-				context.drawTextWithShadow(this.textRenderer, "_", charX, textY, 0x000000);
+		int spacing = 0;
+		for (String letter : word.split("")) {
+			int letterX = textX + spacing - textRenderer.getWidth(letter) / 2;
+			context.drawText(this.textRenderer, letter, letterX, textY, 0x000000, false);
+			spacing += 7;
 		}
 
 		matrices.pop();
@@ -152,41 +133,9 @@ public abstract class AbstractWordstoneScreen extends Screen {
 				this.onDone();
 				yield true;
 			}
-			case GLFW.GLFW_KEY_BACKSPACE -> {
-				if (this.cursorPos > 0) {
-					this.word = this.word.substring(0, this.cursorPos - 1) +
-						this.word.substring(this.cursorPos);
-					this.cursorPos--;
-					this.updateButtons();
-				}
-				yield true;
-			}
-			case GLFW.GLFW_KEY_DELETE -> {
-				if (this.cursorPos < this.word.length()) {
-					this.word = this.word.substring(0, this.cursorPos) +
-						this.word.substring(this.cursorPos + 1);
-					this.updateButtons();
-				}
-				yield true;
-			}
-			case GLFW.GLFW_KEY_LEFT -> {
-				if (this.cursorPos > 0) {
-					this.cursorPos--;
-				}
-				yield true;
-			}
-			case GLFW.GLFW_KEY_RIGHT -> {
-				if (this.cursorPos < Math.min(this.word.length(), 3)) {
-					this.cursorPos++;
-				}
-				yield true;
-			}
-			case GLFW.GLFW_KEY_HOME -> {
-				this.cursorPos = 0;
-				yield true;
-			}
-			case GLFW.GLFW_KEY_END -> {
-				this.cursorPos = this.word.length();
+			case GLFW.GLFW_KEY_BACKSPACE, GLFW.GLFW_KEY_DELETE -> {
+				this.word = this.word.substring(0, this.word.length() - 1);
+				this.updateButtons();
 				yield true;
 			}
 			default -> super.keyPressed(keyCode, scanCode, modifiers);
@@ -195,41 +144,26 @@ public abstract class AbstractWordstoneScreen extends Screen {
 	}
 
 	@Override
-	public boolean charTyped(char chr, int modifiers) {
-		// Check if we've reached the maximum length
-		if (this.word.length() >= 4) {
-			return false;
-		}
+	public boolean charTyped(char letter, int modifiers) {
+		if (this.word.length() >= 4) return false;
+		if (!Character.isLetter(letter)) return super.charTyped(letter, modifiers);
 
-		// Only allow letters (both upper and lower case)
-		if (Character.isLetter(chr)) {
-			// Convert to uppercase for consistency
-			chr = Character.toUpperCase(chr);
-
-			// Insert character at cursor position
-			this.word = this.word.substring(0, this.cursorPos) +
-				chr +
-				this.word.substring(this.cursorPos);
-			this.cursorPos++;
-			this.updateButtons();
-			return true;
-		}
-
-		return super.charTyped(chr, modifiers);
+		letter = Character.toUpperCase(letter);
+		this.word += letter;
+		this.updateButtons();
+		return true;
 	}
 
 	protected void updateButtons() {
-		if (this.doneButton != null) {
+		if (this.doneButton != null)
 			this.doneButton.active = this.word.length() == 4;
-		}
 	}
 
+	abstract public void onDone();
 
 	protected void onDone(ButtonWidget button) {
 		this.onDone();
 	}
-
-	abstract public void onDone();
 
 	@Override
 	public void close() {
@@ -239,11 +173,6 @@ public abstract class AbstractWordstoneScreen extends Screen {
 	@Override
 	public boolean shouldPause() {
 		return false;
-	}
-
-	@Override
-	public boolean shouldCloseOnEsc() {
-		return true;
 	}
 
 }

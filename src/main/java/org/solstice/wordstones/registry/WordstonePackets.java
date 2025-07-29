@@ -1,21 +1,27 @@
 package org.solstice.wordstones.registry;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import org.solstice.wordstones.content.packet.EditWordstonePacket;
-import org.solstice.wordstones.content.packet.UpdateWordstonePacket;
+import org.solstice.wordstones.content.packet.*;
 
 public class WordstonePackets {
 
 	public static void init() {
-		PayloadTypeRegistry.playS2C().register(EditWordstonePacket.ID, EditWordstonePacket.CODEC);
-		PayloadTypeRegistry.playC2S().register(UpdateWordstonePacket.ID, UpdateWordstonePacket.CODEC);
+		PayloadTypeRegistry.playS2C().register(EditWordstoneS2CPacket.ID, EditWordstoneS2CPacket.CODEC);
+		PayloadTypeRegistry.playC2S().register(EditWordstoneC2SPacket.ID, EditWordstoneC2SPacket.CODEC);
+		PayloadTypeRegistry.playS2C().register(TeleportToWordstoneS2CPacket.ID, TeleportToWordstoneS2CPacket.CODEC);
+		PayloadTypeRegistry.playC2S().register(TeleportToWordstoneC2SPacket.ID, TeleportToWordstoneC2SPacket.CODEC);
 	}
 
+	@Environment(EnvType.CLIENT)
 	public static void clientInit() {
-		ClientPlayNetworking.registerGlobalReceiver(EditWordstonePacket.ID, EditWordstonePacket::handle);
-		ServerPlayNetworking.registerGlobalReceiver(UpdateWordstonePacket.ID, UpdateWordstonePacket::handle);
+		ClientPlayNetworking.registerGlobalReceiver(EditWordstoneS2CPacket.ID, EditWordstoneS2CPacket::handle);
+		ServerPlayNetworking.registerGlobalReceiver(EditWordstoneC2SPacket.ID, EditWordstoneC2SPacket::handle);
+		ClientPlayNetworking.registerGlobalReceiver(TeleportToWordstoneS2CPacket.ID, TeleportToWordstoneS2CPacket::handle);
+		ServerPlayNetworking.registerGlobalReceiver(TeleportToWordstoneC2SPacket.ID, TeleportToWordstoneC2SPacket::handle);
 	}
 
 }

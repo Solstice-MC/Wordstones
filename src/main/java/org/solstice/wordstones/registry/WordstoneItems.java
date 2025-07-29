@@ -33,6 +33,8 @@ public class WordstoneItems {
 		);
 	}
 
+	public static final Item KNOWLEDGE_FRAGMENT = register("knowledge_fragment");
+
 	public static final Item LAST_WILL = register("last_will",
 		LastWillItem::new,
 		new Item.Settings()

@@ -97,4 +97,8 @@ public class WordstoneEntity extends BlockEntity {
         super.markRemoved();
     }
 
+	public boolean isPlayerTooFar(PlayerEntity player) {
+		return !player.canInteractWithBlockAt(this.getPos(), 4);
+	}
+
 }
