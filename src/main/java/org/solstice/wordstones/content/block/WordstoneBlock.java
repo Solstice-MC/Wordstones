@@ -25,7 +25,9 @@ public class WordstoneBlock extends AbstractWordstoneBlock {
 	}
 
 	@Override
-	public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+	@Nullable
+	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+		if (state.get(HALF) == DoubleBlockHalf.UPPER) return null;
 		return new WordstoneEntity(pos, state);
 	}
 

@@ -1,30 +1,33 @@
 package org.solstice.wordstones.content.block;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.DoubleBlockHalf;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
-import org.solstice.wordstones.content.block.entity.WordstoneEntity;
 
 public abstract class AbstractWordstoneBlock extends BlockWithEntity {
+
+	public static final VoxelShape
+		BOTTOM_MODEL = Block.createCuboidShape(0, 0, 0, 16, 4, 16),
+		BASE_MODEL = Block.createCuboidShape(2, 4, 2, 14, 26, 14),
+		TOP_MODEL = Block.createCuboidShape(0, 26, 0, 16, 30, 16),
+		CAP_MODEL = Block.createCuboidShape(2, 30, 2, 14, 32, 14),
+		MODEL = VoxelShapes.union(BOTTOM_MODEL, BASE_MODEL, TOP_MODEL, CAP_MODEL);
 
 	public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
 
@@ -107,6 +110,14 @@ public abstract class AbstractWordstoneBlock extends BlockWithEntity {
 			world.setBlockState(belowPos, defaultState);
 //			world.syncWorldEvent(player, 2001, belowPos, Block.getRawIdFromState(belowState));
 		}
+	}
+
+	@Override
+	protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+		VoxelShape result = MODEL;
+		if (state.get(HALF) == DoubleBlockHalf.UPPER)
+			result = result.offset(0, -1, 0);
+		return result;
 	}
 
 }

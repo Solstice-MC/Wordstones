@@ -1,0 +1,32 @@
+{
+	"parent": "minecraft:recipes/root",
+	"criteria": {
+		"has_traveled_far": {
+			"conditions": {
+				"player": {
+					"distance": {
+						"horizontal": 1000
+					}
+				}
+			},
+			"trigger": "minecraft:location"
+		},
+		"has_the_recipe": {
+			"conditions": {
+				"recipe": "wordstones:wordstone"
+			},
+			"trigger": "minecraft:recipe_unlocked"
+		}
+	},
+	"requirements": [
+		[
+			"has_the_recipe",
+			"has_traveled_far"
+		]
+	],
+	"rewards": {
+		"recipes": [
+			"wordstones:wordstone"
+		]
+	}
+}

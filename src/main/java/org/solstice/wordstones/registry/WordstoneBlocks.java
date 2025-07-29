@@ -1,10 +1,12 @@
 package org.solstice.wordstones.registry;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
-import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -22,7 +24,10 @@ import java.util.function.Function;
 
 public class WordstoneBlocks {
 
-	public static void init() {
+	public static void init() {}
+
+	@Environment(EnvType.CLIENT)
+	public static void clientInit() {
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
 			WORDSTONE,
 			DROP_BOX
@@ -33,19 +38,18 @@ public class WordstoneBlocks {
 		WordstoneBlock::new,
 		AbstractBlock.Settings.create()
 			.requiresTool()
-			.strength(2.0F, 6.0F)
-			.mapColor(MapColor.IRON_GRAY)
+			.strength(5, 12)
+			.mapColor(MapColor.STONE_GRAY)
 			.sounds(BlockSoundGroup.STONE)
-			.pistonBehavior(PistonBehavior.BLOCK)
 	);
 	public static final Block DROP_BOX = register("drop_box",
 		DropBoxBlock::new,
 		AbstractBlock.Settings.create()
 			.requiresTool()
-			.strength(2.0F, 6.0F)
+			.strength(5, 6)
 			.mapColor(MapColor.IRON_GRAY)
-			.sounds(BlockSoundGroup.STONE)
-			.pistonBehavior(PistonBehavior.BLOCK)
+			.instrument(NoteBlockInstrument.IRON_XYLOPHONE)
+			.sounds(BlockSoundGroup.METAL)
 	);
 
 	public static Block register(String name) {

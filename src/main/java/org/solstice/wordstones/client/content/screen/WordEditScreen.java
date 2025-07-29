@@ -1,4 +1,4 @@
-package org.solstice.wordstones.client.screen;
+package org.solstice.wordstones.client.content.screen;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.DrawContext;
