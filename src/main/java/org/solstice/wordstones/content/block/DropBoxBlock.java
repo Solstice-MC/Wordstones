@@ -24,8 +24,8 @@ public class DropBoxBlock extends BlockWithEntity {
 
 	public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
 
-	public static final VoxelShape X_SHAPE = Block.createCuboidShape(0, 0, 2, 16, 16, 14);
-	public static final VoxelShape Z_SHAPE = Block.createCuboidShape(2, 0, 0, 14, 16, 16);
+	public static final VoxelShape X_SHAPE = Block.createCuboidShape(2, 0, 0, 14, 16, 16);
+	public static final VoxelShape Z_SHAPE = Block.createCuboidShape(0, 0, 2, 16, 16, 14);
 
 	@Override
     protected MapCodec<? extends BlockWithEntity> getCodec() {
@@ -81,8 +81,7 @@ public class DropBoxBlock extends BlockWithEntity {
 
 	@Override
 	protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-		if (state.get(FACING).getAxis() == Direction.Axis.Y)
-			return X_SHAPE;
+		if (state.get(FACING).getAxis() == Direction.Axis.X) return X_SHAPE;
 		return Z_SHAPE;
 	}
 
